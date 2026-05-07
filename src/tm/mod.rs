@@ -24,6 +24,15 @@ pub fn start() {
     let result = encode_input(input);
 
     println!("Aufgabe 2: {}", result);
+
+    let input = "(q1,0) = (q1,0,R)
+        (q1,1) = (q1,1,R)
+        (q1,s) = (q1,s,R)"
+        .to_string();
+
+    let result = encode_input(input);
+
+    println!("Aufgabe 5: {}", result);
 }
 
 fn initialize_hashmap() -> HashMap<char, String> {

@@ -6,8 +6,6 @@ use syn::{
     parse_macro_input,
 };
 
-use crate::Direction;
-
 pub struct GoedelnummerInput {
     pub transitions: Vec<Transition>,
     pub zustaende: Vec<Zustand>,
@@ -104,20 +102,29 @@ impl GoedelnummerInput {
             }
         }
 
+        let mut zustaende: Vec<Zustand> = zustaende.into_values().collect();
+        zustaende.sort();
         Ok(GoedelnummerInput {
-            transitions: transitions,
-            zustaende: Vec::new(),
+            transitions,
+            zustaende,
         })
     }
 }
 
-struct Transition {
-    start_zustand: Zustand,
-    lesen: usize,
-    end_zustand: Zustand,
-    schreiben: usize,
-    direction: Direction,
+#[derive(Clone)]
+pub struct Transition {
+    pub start_zustand: Zustand,
+    pub lesen: usize,
+    pub end_zustand: Zustand,
+    pub schreiben: usize,
+    pub direction: Direction,
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Zustand(pub usize);
+
 #[derive(Clone)]
-pub struct Zustand(usize);
+pub enum Direction {
+    Left,
+    Right,
+}

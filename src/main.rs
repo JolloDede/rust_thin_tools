@@ -2,10 +2,12 @@ use std::env;
 
 mod stack;
 mod tm;
+mod tm_emulator;
 
 enum Modes {
     Stack,
     TM,
+    Emulator,
 }
 
 fn main() {
@@ -22,6 +24,9 @@ fn main() {
             "tm" => {
                 mode = Some(Modes::TM);
             }
+            "emulator" => {
+                mode = Some(Modes::Emulator);
+            }
             _ => {}
         }
     }
@@ -31,6 +36,9 @@ fn main() {
         }
         Some(Modes::TM) => {
             tm::start();
+        }
+        Some(Modes::Emulator) => {
+            tm_emulator::start(step_mode);
         }
         None => println!("Try using any of the Modes: stack, tm"),
     }

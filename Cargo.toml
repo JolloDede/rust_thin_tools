@@ -3,4 +3,8 @@ name = "rust_kellerautomat"
 version = "0.1.0"
 edition = "2024"
 
+[workspace]
+members = [".", "tm_em"]
+
 [dependencies]
+tm_em = { path = "tm_em" }
