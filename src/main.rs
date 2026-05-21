@@ -1,5 +1,6 @@
 use std::env;
 
+mod collatz;
 mod stack;
 mod tm;
 mod tm_emulator;
@@ -8,6 +9,7 @@ enum Modes {
     Stack,
     TM,
     Emulator,
+    Collatz,
 }
 
 fn main() {
@@ -27,6 +29,9 @@ fn main() {
             "emulator" => {
                 mode = Some(Modes::Emulator);
             }
+            "collatz" => {
+                mode = Some(Modes::Collatz);
+            }
             _ => {}
         }
     }
@@ -39,6 +44,9 @@ fn main() {
         }
         Some(Modes::Emulator) => {
             tm_emulator::start(step_mode);
+        }
+        Some(Modes::Collatz) => {
+            collatz::start();
         }
         None => println!("Try using any of the Modes: stack, tm"),
     }
