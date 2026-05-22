@@ -1,4 +1,4 @@
-use std::{collections::HashMap, time::Instant};
+use std::time::Instant;
 
 mod loopup;
 use loopup::*;
@@ -29,46 +29,45 @@ fn calc_optimized(x: i64, lookup: &mut Lookup) {
     let mut x = x;
     let mut max_len = 0;
     let mut num = 0;
+    let mut items: Vec<(i64, i32)> = Vec::with_capacity(512);
     while x > 0 {
-        let (max, length) = calc_op_max_len(x, lookup);
+        let length = calc_op_max_len(x, &mut items, lookup);
         if length > max_len {
             num = x;
             max_len = length;
         }
-        // println!("Max: {max}, Length: {}", length - 3);
         x -= 1;
     }
     println!("MaxLength: {max_len}, Number: {num}");
 }
 
 #[inline]
-fn calc_op_max_len(x: i64, lookup: &mut Lookup) -> (i64, i32) {
+fn calc_op_max_len(x: i64, items: &mut Vec<(i64, i32)>, lookup: &mut Lookup) -> i32 {
+    items.clear();
     let mut x = x;
     let mut length = 0;
-    let mut max = x;
-    let mut items = Vec::new();
-    items.push(x);
     loop {
-        if let Some(cached_len) = lookup.get(x).copied() {
-            let total_len = length + cached_len;
-            lookup.merge(items, total_len);
-            return (max, total_len);
-        }
-        length += 1;
-        if x % 2 == 0 {
-            x /= 2;
-        } else {
-            x = 3 * x + 1;
-        }
-        max = max.max(x);
-        items.push(x);
         if x == 1 {
             break;
         }
+        if (x & 1) == 0 {
+            if let Some(cached_len) = lookup.get(x).copied() {
+                let total_len = length + cached_len;
+                lookup.merge(items, total_len);
+                return total_len;
+            }
+            items.push((x, length));
+            let trailing = (x as u64).trailing_zeros() as i32;
+            x >>= trailing;
+            length += trailing;
+            continue;
+        }
+        x = 3 * x + 1;
+        length += 1;
     }
     lookup.merge(items, length);
 
-    (max, length)
+    length
 }
 
 fn calc_unopmimized(x: i64) {

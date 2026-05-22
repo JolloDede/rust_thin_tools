@@ -5,12 +5,17 @@ pub struct Lookup {
 impl Lookup {
     pub fn new(size: i64) -> Self {
         let size = size.max(0) as usize;
-        Lookup { arr: vec![0; size] }
+        let len = size / 2 + 1;
+        Lookup { arr: vec![0; len] }
     }
 
     pub fn get(&self, x: i64) -> Option<&i32> {
-        if x >= 0 && x < self.arr.len() as i64 {
-            match self.arr.get(x as usize) {
+        if x < 0 || (x & 1) != 0 {
+            return None;
+        }
+        let index = (x / 2) as usize;
+        if index < self.arr.len() {
+            match self.arr.get(index) {
                 Some(0) => None,
                 val => val,
             }
@@ -19,11 +24,14 @@ impl Lookup {
         }
     }
 
-    pub fn merge(&mut self, new_items: Vec<i64>, length: i32) {
-        for (i, item) in new_items.iter().enumerate() {
-            let length = length - i as i32;
-            if *item >= 0 && *item < self.arr.len() as i64 {
-                self.arr[*item as usize] = length;
+    pub fn merge(&mut self, new_items: &[(i64, i32)], total_len: i32) {
+        for (item, step) in new_items {
+            if *item < 0 || (*item & 1) != 0 {
+                continue;
+            }
+            let index = (*item / 2) as usize;
+            if index < self.arr.len() {
+                self.arr[index] = total_len - *step;
             }
         }
     }
