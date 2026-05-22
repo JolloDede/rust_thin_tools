@@ -91,7 +91,7 @@ While x3 > 0 Do
   x4 = x4 + 1;
   x3 = x3 - 1
 End;
-x0 = x4 + 0;
+x0 = x4 + 0
 ```
 
 ### Teilaufgabe B
