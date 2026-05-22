@@ -1,5 +1,5 @@
 pub struct Lookup {
-    arr: Vec<i64>,
+    arr: Vec<i32>,
 }
 
 impl Lookup {
@@ -8,7 +8,7 @@ impl Lookup {
         Lookup { arr: vec![0; size] }
     }
 
-    pub fn get(&self, x: i64) -> Option<&i64> {
+    pub fn get(&self, x: i64) -> Option<&i32> {
         if x >= 0 && x < self.arr.len() as i64 {
             match self.arr.get(x as usize) {
                 Some(0) => None,
@@ -19,9 +19,9 @@ impl Lookup {
         }
     }
 
-    pub fn merge(&mut self, new_items: Vec<i64>, length: i64) {
+    pub fn merge(&mut self, new_items: Vec<i64>, length: i32) {
         for (i, item) in new_items.iter().enumerate() {
-            let length = length - i as i64;
+            let length = length - i as i32;
             if *item >= 0 && *item < self.arr.len() as i64 {
                 self.arr[*item as usize] = length;
             }

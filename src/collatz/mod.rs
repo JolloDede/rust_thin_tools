@@ -5,15 +5,15 @@ use loopup::*;
 
 pub fn start() {
     println!("Start collatz");
-    let x = 3;
+    let x = 90_000_000;
 
-    let now = Instant::now();
-    calc_unopmimized(x);
-    let elapsed_time = now.elapsed();
-    println!(
-        "Unoptimized collatz took {} seconds.",
-        elapsed_time.as_secs_f32()
-    );
+    // let now = Instant::now();
+    // calc_unopmimized(x);
+    // let elapsed_time = now.elapsed();
+    // println!(
+    //     "Unoptimized collatz took {} seconds.",
+    //     elapsed_time.as_secs_f32()
+    // );
 
     let mut lookup = Lookup::new(x);
     let now = Instant::now();
@@ -42,7 +42,7 @@ fn calc_optimized(x: i64, lookup: &mut Lookup) {
 }
 
 #[inline]
-fn calc_op_max_len(x: i64, lookup: &mut Lookup) -> (i64, i64) {
+fn calc_op_max_len(x: i64, lookup: &mut Lookup) -> (i64, i32) {
     let mut x = x;
     let mut length = 0;
     let mut max = x;
@@ -76,22 +76,21 @@ fn calc_unopmimized(x: i64) {
     let mut max_len = 0;
     let mut num = 0;
     while x > 0 {
-        let (max, length) = calc_unop_max_len(x);
+        let length = calc_unop_max_len(x);
         if length > max_len {
             num = x;
             max_len = length;
         }
-        // println!("Max: {max}, Length: {}", length - 3);
+        println!("Length of {x}: {}", length - 3);
         x -= 1;
     }
     println!("MaxLength: {max_len}, Number: {num}");
 }
 
 #[inline]
-fn calc_unop_max_len(x: i64) -> (i64, i64) {
+fn calc_unop_max_len(x: i64) -> i64 {
     let mut x = x;
     let mut length = 0;
-    let mut max = x;
     loop {
         length += 1;
         if x % 2 == 0 {
@@ -99,11 +98,10 @@ fn calc_unop_max_len(x: i64) -> (i64, i64) {
         } else {
             x = 3 * x + 1;
         }
-        max = max.max(x);
         if x == 1 {
             break;
         }
     }
 
-    (max, length)
+    length
 }
