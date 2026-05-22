@@ -5,15 +5,15 @@ use loopup::*;
 
 pub fn start() {
     println!("Start collatz");
-    let x = 90_000_000;
+    let x = 1_000;
 
-    // let now = Instant::now();
-    // calc_unopmimized(x);
-    // let elapsed_time = now.elapsed();
-    // println!(
-    //     "Unoptimized collatz took {} seconds.",
-    //     elapsed_time.as_secs_f32()
-    // );
+    let now = Instant::now();
+    calc_unopmimized(x);
+    let elapsed_time = now.elapsed();
+    println!(
+        "Unoptimized collatz took {} seconds.",
+        elapsed_time.as_secs_f32()
+    );
 
     let mut lookup = Lookup::new(x);
     let now = Instant::now();
@@ -81,7 +81,7 @@ fn calc_unopmimized(x: i64) {
             num = x;
             max_len = length;
         }
-        println!("Length of {x}: {}", length - 3);
+        println!("Length of {x}: {}", length);
         x -= 1;
     }
     println!("MaxLength: {max_len}, Number: {num}");
