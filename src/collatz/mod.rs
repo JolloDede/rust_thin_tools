@@ -57,9 +57,7 @@ fn calc_op_max_len(x: u64, lookup: &mut Lookup, items: &mut Vec<(u64, u32)>) -> 
             x >>= tz;
             length += tz;
 
-            // if x & 1 == 1 {
             items.push((x, length));
-            // }
         } else {
             if let Some(cached_len) = lookup.get(x).copied() {
                 let total_len = length + cached_len;
@@ -68,6 +66,10 @@ fn calc_op_max_len(x: u64, lookup: &mut Lookup, items: &mut Vec<(u64, u32)>) -> 
             }
             x = (3 * x + 1) >> 1;
             length += 2;
+
+            if x & 1 == 1 {
+                items.push((x, length));
+            }
         }
 
         if x == 1 {
@@ -113,3 +115,6 @@ fn calc_unop_max_len(x: i64) -> i64 {
 
     length
 }
+
+#[cfg(test)]
+mod test {}
