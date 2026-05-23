@@ -1,4 +1,4 @@
-use std::{collections::HashMap, time::Instant};
+use std::time::Instant;
 
 mod loopup;
 use loopup::*;
@@ -44,14 +44,22 @@ fn calc_optimized(x: u64, lookup: &mut Lookup) {
 #[inline]
 fn calc_op_max_len(x: u64, lookup: &mut Lookup, items: &mut Vec<(u64, u32)>) -> u32 {
     items.clear();
-    items.push((x, 0));
     let mut x = x;
     let mut length: u32 = 0;
+
+    if x & 1 == 1 {
+        items.push((x, 0));
+    }
+
     loop {
         if x & 1 == 0 {
             let tz = x.trailing_zeros();
             x >>= tz;
             length += tz;
+
+            // if x & 1 == 1 {
+            items.push((x, length));
+            // }
         } else {
             if let Some(cached_len) = lookup.get(x).copied() {
                 let total_len = length + cached_len;
@@ -61,7 +69,7 @@ fn calc_op_max_len(x: u64, lookup: &mut Lookup, items: &mut Vec<(u64, u32)>) -> 
             x = (3 * x + 1) >> 1;
             length += 2;
         }
-        items.push((x, length));
+
         if x == 1 {
             break;
         }
