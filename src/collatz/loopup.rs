@@ -27,7 +27,9 @@ impl Lookup {
             // Save only odd values (even values would collide on the same index)
             if item < self.arr.len() as u64 && item & 1 == 1 {
                 let idx = (item / 2) as usize;
-                self.arr[idx] = length;
+                if self.arr[idx] == 0 {
+                    self.arr[idx] = length;
+                }
             }
         }
     }

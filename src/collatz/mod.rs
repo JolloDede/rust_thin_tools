@@ -29,14 +29,14 @@ fn calc_optimized(x: u64, lookup: &mut Lookup) {
     let mut max_len = 0;
     let mut num = 0;
     let mut items: Vec<(u64, u32)> = Vec::with_capacity(200);
-    for n in 1..=x {
+    let mut n: u64 = 1;
+    while n <= x {
         let length = calc_op_max_len(n, lookup, &mut items);
         if length > max_len {
             num = n;
             max_len = length;
         }
-        // println!("Max: {max}, Length: {}", length - 3);
-        // x -= 1;
+        n += 2;
     }
     println!("MaxLength: {max_len}, Number: {num}");
 }
@@ -59,17 +59,17 @@ fn calc_op_max_len(x: u64, lookup: &mut Lookup, items: &mut Vec<(u64, u32)>) -> 
 
             items.push((x, length));
         } else {
-            if let Some(cached_len) = lookup.get(x).copied() {
-                let total_len = length + cached_len;
-                lookup.merge(items, total_len);
-                return total_len;
-            }
             x = (3 * x + 1) >> 1;
             length += 2;
 
             if x & 1 == 1 {
                 items.push((x, length));
             }
+        }
+        if let Some(cached_len) = lookup.get(x).copied() {
+            let total_len = length + cached_len;
+            lookup.merge(items, total_len);
+            return total_len;
         }
 
         if x == 1 {
