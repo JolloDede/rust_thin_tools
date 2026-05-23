@@ -9,24 +9,24 @@ impl Lookup {
         Lookup { arr: vec![0; len] }
     }
 
-    pub fn get(&self, x: u64) -> Option<&u32> {
-        if x < self.arr.len() as u64 {
-            let idx = (x / 2) as usize;
-            match self.arr.get(idx) {
-                Some(0) => None,
-                val => val,
-            }
+    pub fn get(&self, x: u64) -> Option<u32> {
+        let len = self.arr.len() as u64;
+        if x < len && (x & 1 == 1) {
+            let idx = (x >> 1) as usize;
+            let val = self.arr[idx];
+            if val == 0 { None } else { Some(val) }
         } else {
             None
         }
     }
 
     pub fn merge(&mut self, new_items: &[(u64, u32)], total_len: u32) {
+        let len = self.arr.len() as u64;
         for (item, len_so_far) in new_items.iter().copied() {
             let length = total_len - len_so_far;
-            // Save only odd values (even values would collide on the same index)
-            if item < self.arr.len() as u64 && item & 1 == 1 {
-                let idx = (item / 2) as usize;
+            debug_assert!(item & 1 == 1);
+            if item < len {
+                let idx = (item >> 1) as usize;
                 if self.arr[idx] == 0 {
                     self.arr[idx] = length;
                 }

@@ -8,3 +8,6 @@ members = [".", "tm_em"]
 
 [dependencies]
 tm_em = { path = "tm_em" }
+
+# [profile.release]
+# debug = true

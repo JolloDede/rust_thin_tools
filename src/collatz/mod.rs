@@ -25,10 +25,12 @@ pub fn start() {
     );
 }
 
+// 240 is the optimum for 90_000_000
+static ITEMS_CAPACITY: usize = 240;
 fn calc_optimized(x: u64, lookup: &mut Lookup) {
     let mut max_len = 0;
     let mut num = 0;
-    let mut items: Vec<(u64, u32)> = Vec::with_capacity(200);
+    let mut items: Vec<(u64, u32)> = Vec::with_capacity(ITEMS_CAPACITY);
     let mut n: u64 = 1;
     while n <= x {
         let length = calc_op_max_len(n, lookup, &mut items);
@@ -38,6 +40,7 @@ fn calc_optimized(x: u64, lookup: &mut Lookup) {
         }
         n += 2;
     }
+    // println!("Items capacity: {}", items.capacity());
     println!("MaxLength: {max_len}, Number: {num}");
 }
 
@@ -52,24 +55,25 @@ fn calc_op_max_len(x: u64, lookup: &mut Lookup, items: &mut Vec<(u64, u32)>) -> 
     }
 
     loop {
+        if let Some(cached_len) = lookup.get(x) {
+            let total_len = length + cached_len;
+            lookup.merge(items, total_len);
+            return total_len;
+        }
         if x & 1 == 0 {
             let tz = x.trailing_zeros();
             x >>= tz;
             length += tz;
+            collapse_trailing_zeros(x, length);
 
             items.push((x, length));
         } else {
-            x = (3 * x + 1) >> 1;
-            length += 2;
+            x = 3 * x + 1;
+            collapse_trailing_zeros(x, length);
 
             if x & 1 == 1 {
                 items.push((x, length));
             }
-        }
-        if let Some(cached_len) = lookup.get(x).copied() {
-            let total_len = length + cached_len;
-            lookup.merge(items, total_len);
-            return total_len;
         }
 
         if x == 1 {
@@ -79,6 +83,12 @@ fn calc_op_max_len(x: u64, lookup: &mut Lookup, items: &mut Vec<(u64, u32)>) -> 
     lookup.merge(items, length);
 
     length
+}
+
+fn collapse_trailing_zeros(mut x: u64, mut length: u32) {
+    let tz = x.trailing_zeros();
+    x >>= tz;
+    length += tz;
 }
 
 fn calc_unopmimized(x: i64) {
